@@ -89,6 +89,7 @@ class ResearchUpdate(TypedDict, total=False):
     revision_count: int
     trace_id: str
     trace_summary: dict[str, object]
+    approval: dict[str, object]
 
 
 WebSearch = Callable[[str], list[SearchResult]]
@@ -293,8 +294,12 @@ def _reflector_node(state: ResearchState) -> ResearchUpdate:
 def _summarizer_node(state: ResearchState) -> ResearchUpdate:
     draft = state.get("draft", "").strip()
     critique = state.get("critique", {}) or {}
+    # Check the ORIGINAL draft for injection patterns before sanitizing it —
+    # sanitize_output() strips those patterns out, so checking the already
+    # sanitized text can never find anything.
+    had_injection = any(pattern in draft.lower() for pattern in PROMPT_INJECTION_PATTERNS)
     sanitized_draft = sanitize_output(draft)
-    if sum(1 for signal in PROMPT_INJECTION_PATTERNS if signal in sanitized_draft.lower()) > 0:
+    if had_injection:
         summary = (
             "Security blocked: the draft contains instruction-overwrite or prompt-injection language. "
             "The agent refuses to present or endorse the unsafe content."
@@ -323,7 +328,15 @@ def _approval_node(state: ResearchState) -> ResearchUpdate:
     summary_text = state.get("summary", "")
     evidence_count = len(state.get("rag_results", [])) + len(state.get("web_results", []))
     summary_lower = summary_text.lower()
-    suspicious = any(signal in summary_lower for signal in PROMPT_INJECTION_PATTERNS)
+
+    # Re-verify against the critic's own (pre-sanitization) findings rather
+    # than re-scanning the summary text, since the summarizer already
+    # sanitizes prompt-injection language out of the summary before this
+    # node ever sees it — scanning the sanitized text can't find anything.
+    critique = state.get("critique", {}) or {}
+    injection_signals = critique.get("prompt_injection_signals", []) if isinstance(critique, dict) else []
+    suspicious = bool(injection_signals)
+
     if suspicious or "security blocked" in summary_lower or "prompt injection" in summary_lower:
         risk_level = "high"
         confidence = "low"
