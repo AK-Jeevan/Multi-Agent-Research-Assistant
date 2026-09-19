@@ -1,0 +1,10 @@
+services:
+  research-assistant:
+    build: .
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./data/chroma:/app/data/chroma
+      - ./data/trajectories:/app/data/trajectories
+    restart: "no"

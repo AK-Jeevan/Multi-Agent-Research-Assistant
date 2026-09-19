@@ -1,0 +1,123 @@
+{
+  "question": "What is hybrid retrieval?",
+  "research_plan": [
+    "Identify the key concepts and scope of: What is hybrid retrieval?",
+    "Search the local knowledge base for evidence about: What is hybrid retrieval?",
+    "Use the MCP web_search tool for current context about: What is hybrid retrieval?",
+    "Draft an answer that separates local, remembered, and web evidence"
+  ],
+  "rag_results": [
+    {
+      "text": "# Retrieval guide\n\nHybrid retrieval combines lexical search with semantic vector search. Lexical search is useful when an exact term, identifier, or phrase matters. Semantic search is useful when the question and source use different wording but express a similar idea.\n\nReranking is a second-stage operation. A retriever first gathers a candidate set, then a reranker scores those candidates more precisely so the most useful passages appear first.",
+      "source": "retrieval-guide.md",
+      "distance": "0.4731596112251282"
+    },
+    {
+      "text": "# Memory guide\n\nShort-term memory holds information needed during one active run, such as the current question, plan, retrieved passages, and draft answer.\n\nLong-term memory persists selected information across runs. It should store only useful, trusted facts and should keep provenance so later answers can distinguish remembered information from newly retrieved evidence.",
+      "source": "memory-guide.md",
+      "distance": "0.8152593374252319"
+    }
+  ],
+  "web_results": [
+    {
+      "title": "Example web result",
+      "href": "https://example.com/research",
+      "body": "Web context for What is hybrid retrieval?."
+    }
+  ],
+  "memory_results": [
+    {
+      "text": "Research was completed for: What is hybrid retrieval?. Sources used: retrieval-guide.md, https://example.com/recovery.",
+      "source": "retrieval-guide.md, https://example.com/recovery",
+      "created_at": "20260918T084654467896Z"
+    },
+    {
+      "text": "Research was completed for: What is hybrid retrieval?. Sources used: retrieval-guide.md, https://www.emergentmind.com/topics/hybrid-retrieval.",
+      "source": "retrieval-guide.md, https://www.emergentmind.com/topics/hybrid-retrieval",
+      "created_at": "20260917T100849839945Z"
+    }
+  ],
+  "draft": "Research question: What is hybrid retrieval?\n\nLocal evidence:\n- Local source (retrieval-guide.md): # Retrieval guide\n\nHybrid retrieval combines lexical search with semantic vector search. Lexical search is useful when an exact term, identifier, or phrase matters. Semantic search is useful when the question and source use different wording but express a similar idea.\n\nReranking is a second-stage operation. A retriever first gathers a candidate set, then a reranker scores those candidates more precisely so the most useful passages appear first.\n- Local source (memory-guide.md): # Memory guide\n\nShort-term memory holds information needed during one active run, such as the current question, plan, retrieved passages, and draft answer.\n\nLong-term memory persists selected information across runs. It should store only useful, trusted facts and should keep provenance so later answers can distinguish remembered information from newly retrieved evidence.\n\nRemembered evidence:\n- Remembered note (retrieval-guide.md, https://example.com/recovery): Research was completed for: What is hybrid retrieval?. Sources used: retrieval-guide.md, https://example.com/recovery.\n- Remembered note (retrieval-guide.md, https://www.emergentmind.com/topics/hybrid-retrieval): Research was completed for: What is hybrid retrieval?. Sources used: retrieval-guide.md, https://www.emergentmind.com/topics/hybrid-retrieval.\n\nWeb evidence:\n- Web source (Example web result): Web context for What is hybrid retrieval?. [https://example.com/research]",
+  "critique": {
+    "status": "supported",
+    "weaknesses": [],
+    "evidence_counts": {
+      "rag": 2,
+      "web": 1
+    }
+  },
+  "trajectory": [
+    {
+      "event_type": "node",
+      "name": "manager",
+      "arguments": {
+        "question": "What is hybrid retrieval?"
+      },
+      "output": {
+        "plan": [
+          "Identify the key concepts and scope of: What is hybrid retrieval?",
+          "Search the local knowledge base for evidence about: What is hybrid retrieval?",
+          "Use the MCP web_search tool for current context about: What is hybrid retrieval?",
+          "Draft an answer that separates local, remembered, and web evidence"
+        ]
+      }
+    },
+    {
+      "event_type": "tool",
+      "name": "rag_retrieve",
+      "arguments": {
+        "query": "What is hybrid retrieval?",
+        "top_k": 2
+      },
+      "output": {
+        "result_count": 2
+      }
+    },
+    {
+      "event_type": "tool",
+      "name": "memory_recall",
+      "arguments": {
+        "query": "What is hybrid retrieval?",
+        "top_k": 2
+      },
+      "output": {
+        "result_count": 2
+      }
+    },
+    {
+      "event_type": "tool",
+      "name": "web_search",
+      "arguments": {
+        "query": "What is hybrid retrieval?"
+      },
+      "output": {
+        "result_count": 1
+      }
+    },
+    {
+      "event_type": "node",
+      "name": "researcher",
+      "arguments": {
+        "question": "What is hybrid retrieval?"
+      },
+      "output": {
+        "draft_length": 1528
+      }
+    },
+    {
+      "event_type": "node",
+      "name": "critic",
+      "arguments": {
+        "draft_length": 1528
+      },
+      "output": {
+        "status": "supported",
+        "weaknesses": [],
+        "evidence_counts": {
+          "rag": 2,
+          "web": 1
+        }
+      }
+    }
+  ]
+}

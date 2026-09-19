@@ -1,0 +1,22 @@
+[
+  {
+    "query": "When is lexical search useful?",
+    "expected_document": "retrieval-guide.md",
+    "expected_text": "exact term"
+  },
+  {
+    "query": "What does trajectory evaluation inspect?",
+    "expected_document": "evaluation-guide.md",
+    "expected_text": "sequence of actions"
+  },
+  {
+    "query": "What belongs in short-term memory?",
+    "expected_document": "memory-guide.md",
+    "expected_text": "current question"
+  },
+  {
+    "query": "Why should a judge be calibrated?",
+    "expected_document": "evaluation-guide.md",
+    "expected_text": "human-labeled examples"
+  }
+]

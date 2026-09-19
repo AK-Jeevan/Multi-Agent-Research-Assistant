@@ -1,0 +1,9 @@
+.env
+.git
+.gitignore
+Agent1/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+data/chroma/
+data/eval/latest-summary.json

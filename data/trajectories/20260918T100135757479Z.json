@@ -1,0 +1,194 @@
+{
+  "question": "What is hybrid retrieval?",
+  "research_plan": [
+    "Identify the key concepts and scope of: What is hybrid retrieval?",
+    "Search the local knowledge base for evidence about: What is hybrid retrieval?",
+    "Use the MCP web_search tool for current context about: What is hybrid retrieval?",
+    "Draft an answer that separates local, remembered, and web evidence"
+  ],
+  "rag_results": [
+    {
+      "text": "# Retrieval guide\n\nHybrid retrieval combines lexical search with semantic vector search. Lexical search is useful when an exact term, identifier, or phrase matters. Semantic search is useful when the question and source use different wording but express a similar idea.\n\nReranking is a second-stage operation. A retriever first gathers a candidate set, then a reranker scores those candidates more precisely so the most useful passages appear first.",
+      "source": "retrieval-guide.md",
+      "distance": "0.4731596112251282"
+    },
+    {
+      "text": "# Memory guide\n\nShort-term memory holds information needed during one active run, such as the current question, plan, retrieved passages, and draft answer.\n\nLong-term memory persists selected information across runs. It should store only useful, trusted facts and should keep provenance so later answers can distinguish remembered information from newly retrieved evidence.",
+      "source": "memory-guide.md",
+      "distance": "0.8152593374252319"
+    }
+  ],
+  "web_results": [
+    {
+      "title": "What is hybrid search? How it works and when to use it | Elastic",
+      "href": "https://www.elastic.co/what-is/hybrid-search",
+      "body": "Hybrid search is an information retrieval technique that blends two or more search methods (e.g., lexical search and semantic search) into a single ranked list to improve relevance and recall."
+    },
+    {
+      "title": "Hybrid Document Retrieval | Haystack",
+      "href": "https://haystack.deepset.ai/blog/hybrid-retrieval",
+      "body": "Both retrievers return ranked lists of results with relevance scores attached to each document (note that, since they employ different scoring techniques, the scores are not really meaningful in a hybrid retrieval setting). You can use different methods for joining these results lists. Which one you use \u2013 and whether you add another module on top of the JoinDocuments node \u2013 depends on your use case. Concatenation: all documents (sans duplicates) are simply appended to the final list of results. This method is sufficient if you plan to use all the results and don\u2019t care about their order."
+    },
+    {
+      "title": "Creating a Hybrid Retrieval Pipeline | Haystack",
+      "href": "https://haystack.deepset.ai/tutorials/33_hybrid_retrieval",
+      "body": "June 17, 2026 - Hybrid retrieval refers to the combination of multiple retrieval methods to enhance overall performance. In the context of search systems, a hybrid retrieval pipeline executes both traditional keyword-based search and dense vector search, later ..."
+    },
+    {
+      "title": "Hybrid Search Overview - Azure AI Search | Microsoft Learn",
+      "href": "https://learn.microsoft.com/en-us/azure/search/hybrid-search-overview",
+      "body": "Learn how hybrid search in Azure AI Search combines vector and full-text queries in a single request for more relevant results using reciprocal rank fusion."
+    },
+    {
+      "title": "Hybrid Retrieval-Augmented Generation (RAG): A Practical Guide | by Jay Kim | Medium",
+      "href": "https://medium.com/@bravekjh/hybrid-retrieval-augmented-generation-rag-a-practical-guide-dab74fc28ee9",
+      "body": "March 12, 2025 - Hybrid Retrieval-Augmented Generation (RAG): A Practical Guide RAG (Retrieval-Augmented Generation) is a technique that enhances language models with an external knowledge source. Instead of relying \u2026"
+    }
+  ],
+  "memory_results": [
+    {
+      "text": "Research was completed for: What is hybrid retrieval?. Sources used: retrieval-guide.md, https://example.com/recovery.",
+      "source": "retrieval-guide.md, https://example.com/recovery",
+      "created_at": "20260918T084654467896Z"
+    },
+    {
+      "text": "Research was completed for: What is hybrid retrieval?. Sources used: retrieval-guide.md, https://example.com/recovery.",
+      "source": "retrieval-guide.md, https://example.com/recovery",
+      "created_at": "20260918T095531701026Z"
+    }
+  ],
+  "draft": "Research question: What is hybrid retrieval?\n\nLocal evidence:\n- Local source (retrieval-guide.md): # Retrieval guide\n\nHybrid retrieval combines lexical search with semantic vector search. Lexical search is useful when an exact term, identifier, or phrase matters. Semantic search is useful when the question and source use different wording but express a similar idea.\n\nReranking is a second-stage operation. A retriever first gathers a candidate set, then a reranker scores those candidates more precisely so the most useful passages appear first.\n- Local source (memory-guide.md): # Memory guide\n\nShort-term memory holds information needed during one active run, such as the current question, plan, retrieved passages, and draft answer.\n\nLong-term memory persists selected information across runs. It should store only useful, trusted facts and should keep provenance so later answers can distinguish remembered information from newly retrieved evidence.\n\nRemembered evidence:\n- Remembered note (retrieval-guide.md, https://example.com/recovery): Research was completed for: What is hybrid retrieval?. Sources used: retrieval-guide.md, https://example.com/recovery.\n- Remembered note (retrieval-guide.md, https://example.com/recovery): Research was completed for: What is hybrid retrieval?. Sources used: retrieval-guide.md, https://example.com/recovery.\n\nWeb evidence:\n- Web source (What is hybrid search? How it works and when to use it | Elastic): Hybrid search is an information retrieval technique that blends two or more search methods (e.g., lexical search and semantic search) into a single ranked list to improve relevance and recall. [https://www.elastic.co/what-is/hybrid-search]\n- Web source (Hybrid Document Retrieval | Haystack): Both retrievers return ranked lists of results with relevance scores attached to each document (note that, since they employ different scoring techniques, the scores are not really meaningful in a hybrid retrieval setting). You can use different methods for joining these results lists. Which one you use \u2013 and whether you add another module on top of the JoinDocuments node \u2013 depends on your use case. Concatenation: all documents (sans duplicates) are simply appended to the final list of results. This method is sufficient if you plan to use all the results and don\u2019t care about their order. [https://haystack.deepset.ai/blog/hybrid-retrieval]\n- Web source (Creating a Hybrid Retrieval Pipeline | Haystack): June 17, 2026 - Hybrid retrieval refers to the combination of multiple retrieval methods to enhance overall performance. In the context of search systems, a hybrid retrieval pipeline executes both traditional keyword-based search and dense vector search, later ... [https://haystack.deepset.ai/tutorials/33_hybrid_retrieval]\n- Web source (Hybrid Search Overview - Azure AI Search | Microsoft Learn): Learn how hybrid search in Azure AI Search combines vector and full-text queries in a single request for more relevant results using reciprocal rank fusion. [https://learn.microsoft.com/en-us/azure/search/hybrid-search-overview]\n- Web source (Hybrid Retrieval-Augmented Generation (RAG): A Practical Guide | by Jay Kim | Medium): March 12, 2025 - Hybrid Retrieval-Augmented Generation (RAG): A Practical Guide RAG (Retrieval-Augmented Generation) is a technique that enhances language models with an external knowledge source. Instead of relying \u2026 [https://medium.com/@bravekjh/hybrid-retrieval-augmented-generation-rag-a-practical-guide-dab74fc28ee9]",
+  "critique": {
+    "status": "supported",
+    "weaknesses": [],
+    "evidence_counts": {
+      "rag": 2,
+      "web": 5
+    }
+  },
+  "trajectory": [
+    {
+      "event_type": "node",
+      "name": "manager",
+      "timestamp": "2026-09-18T10:01:09.784379+00:00",
+      "arguments": {
+        "question": "What is hybrid retrieval?"
+      },
+      "output": {
+        "plan": [
+          "Identify the key concepts and scope of: What is hybrid retrieval?",
+          "Search the local knowledge base for evidence about: What is hybrid retrieval?",
+          "Use the MCP web_search tool for current context about: What is hybrid retrieval?",
+          "Draft an answer that separates local, remembered, and web evidence"
+        ]
+      }
+    },
+    {
+      "event_type": "tool",
+      "name": "rag_retrieve",
+      "timestamp": "2026-09-18T10:01:31.397683+00:00",
+      "arguments": {
+        "query": "What is hybrid retrieval?",
+        "top_k": 2
+      },
+      "output": {
+        "result_count": 2
+      }
+    },
+    {
+      "event_type": "tool",
+      "name": "memory_recall",
+      "timestamp": "2026-09-18T10:01:31.397707+00:00",
+      "arguments": {
+        "query": "What is hybrid retrieval?",
+        "top_k": 2
+      },
+      "output": {
+        "result_count": 2
+      }
+    },
+    {
+      "event_type": "tool",
+      "name": "web_search",
+      "timestamp": "2026-09-18T10:01:35.686815+00:00",
+      "arguments": {
+        "query": "What is hybrid retrieval?"
+      },
+      "output": {
+        "result_count": 5
+      }
+    },
+    {
+      "event_type": "node",
+      "name": "researcher",
+      "timestamp": "2026-09-18T10:01:35.686863+00:00",
+      "arguments": {
+        "question": "What is hybrid retrieval?"
+      },
+      "output": {
+        "draft_length": 3508
+      }
+    },
+    {
+      "event_type": "node",
+      "name": "critic",
+      "timestamp": "2026-09-18T10:01:35.689542+00:00",
+      "arguments": {
+        "draft_length": 3508
+      },
+      "output": {
+        "status": "supported",
+        "weaknesses": [],
+        "evidence_counts": {
+          "rag": 2,
+          "web": 5
+        }
+      }
+    },
+    {
+      "event_type": "node",
+      "name": "summarizer",
+      "timestamp": "2026-09-18T10:01:35.690621+00:00",
+      "arguments": {
+        "draft_length": 3508
+      },
+      "output": {
+        "summary": "Summary:\nResearch question: What is hybrid retrieval?\n\nLocal evidence:\n- Local source (retrieval-guide.md): # Retrieval guide\n\nHybrid retrieval combines lexical search with semantic vector search. Lexical search is useful when an exact term, identifier, or phrase matters. Semantic search is useful when the question and source use different wording but express a similar idea.\n\nReranking is a second-stage operation. A retriever first gathers a candidate set, then a reranker scores those candidates more precisely so the most useful passages appear first.\n- Local source (memory-guide.md): # Memory guide\n\nShort-term memory holds information needed during one active run, such as the current question, plan, retrieved passages, and draft answer.\n\nLong-term memory persists selected information across runs. It should store only useful, trusted facts and should keep provenance so later answers can distinguish remembered information from newly retrieved evidence.\n\nRemembered evidence:\n- Remembered note (retrieval-guide.md, https://example.com/recovery): Research was completed for: What is hybrid retrieval?. Sources used: retrieval-guide.md, https://example.com/recovery.\n- Remembered note (retrieval-guide.md, https://example.com/recovery): Research was completed for: What is hybrid retrieval?. Sources used: retrieval-guide.md, https://example.com/recovery.\n\nWeb evidence:\n- Web source (What is hybrid search? How it works and when to use it | Elastic): Hybrid search is an information retrieval technique that blends two or more search methods (e.g., lexical search and semantic search) into a single ranked list to improve relevance and recall. [https://www.elastic.co/what-is/hybrid-search]\n- Web source (Hybrid Document Retrieval | Haystack): Both retrievers return ranked lists of results with relevance scores attached to each document (note that, since they employ different scoring techniques, the scores are not really meaningful in a hybrid retrieval setting). You can use different methods for joining these results lists. Which one you use \u2013 and whether you add another module on top of the JoinDocuments node \u2013 depends on your use case. Concatenation: all documents (sans duplicates) are simply appended to the final list of results. This method is sufficient if you plan to use all the results and don\u2019t care about their order. [https://haystack.deepset.ai/blog/hybrid-retrieval]\n- Web source (Creating a Hybrid Retrieval Pipeline | Haystack): June 17, 2026 - Hybrid retrieval refers to the combination of multiple retrieval methods to enhance overall performance. In the context of search systems, a hybrid retrieval pipeline executes both traditional keyword-based search and dense vector search, later ... [https://haystack.deepset.ai/tutorials/33_hybrid_retrieval]\n- Web source (Hybrid Search Overview - Azure AI Search | Microsoft Learn): Learn how hybrid search in Azure AI Search combines vector and full-text queries in a single request for more relevant results using reciprocal rank fusion. [https://learn.microsoft.com/en-us/azure/search/hybrid-search-overview]\n- Web source (Hybrid Retrieval-Augmented Generation (RAG): A Practical Guide | by Jay Kim | Medium): March 12, 2025 - Hybrid Retrieval-Augmented Generation (RAG): A Practical Guide RAG (Retrieval-Augmented Generation) is a technique that enhances language models with an external knowledge source. Instead of relying \u2026 [https://medium.com/@bravekjh/hybrid-retrieval-augmented-generation-rag-a-practical-guide-dab74fc28ee9]\n\nCritic review: supported.",
+        "needs_approval": true
+      }
+    },
+    {
+      "event_type": "node",
+      "name": "approval",
+      "timestamp": "2026-09-18T10:01:35.691247+00:00",
+      "arguments": {
+        "summary": "Summary:\nResearch question: What is hybrid retrieval?\n\nLocal evidence:\n- Local source (retrieval-guide.md): # Retrieval guide\n\nHybrid retrieval combines lexical search with semantic vector search. Lexical search is useful when an exact term, identifier, or phrase matters. Semantic search is useful when the question and source use different wording but express a similar idea.\n\nReranking is a second-stage operation. A retriever first gathers a candidate set, then a reranker scores those candidates more precisely so the most useful passages appear first.\n- Local source (memory-guide.md): # Memory guide\n\nShort-term memory holds information needed during one active run, such as the current question, plan, retrieved passages, and draft answer.\n\nLong-term memory persists selected information across runs. It should store only useful, trusted facts and should keep provenance so later answers can distinguish remembered information from newly retrieved evidence.\n\nRemembered evidence:\n- Remembered note (retrieval-guide.md, https://example.com/recovery): Research was completed for: What is hybrid retrieval?. Sources used: retrieval-guide.md, https://example.com/recovery.\n- Remembered note (retrieval-guide.md, https://example.com/recovery): Research was completed for: What is hybrid retrieval?. Sources used: retrieval-guide.md, https://example.com/recovery.\n\nWeb evidence:\n- Web source (What is hybrid search? How it works and when to use it | Elastic): Hybrid search is an information retrieval technique that blends two or more search methods (e.g., lexical search and semantic search) into a single ranked list to improve relevance and recall. [https://www.elastic.co/what-is/hybrid-search]\n- Web source (Hybrid Document Retrieval | Haystack): Both retrievers return ranked lists of results with relevance scores attached to each document (note that, since they employ different scoring techniques, the scores are not really meaningful in a hybrid retrieval setting). You can use different methods for joining these results lists. Which one you use \u2013 and whether you add another module on top of the JoinDocuments node \u2013 depends on your use case. Concatenation: all documents (sans duplicates) are simply appended to the final list of results. This method is sufficient if you plan to use all the results and don\u2019t care about their order. [https://haystack.deepset.ai/blog/hybrid-retrieval]\n- Web source (Creating a Hybrid Retrieval Pipeline | Haystack): June 17, 2026 - Hybrid retrieval refers to the combination of multiple retrieval methods to enhance overall performance. In the context of search systems, a hybrid retrieval pipeline executes both traditional keyword-based search and dense vector search, later ... [https://haystack.deepset.ai/tutorials/33_hybrid_retrieval]\n- Web source (Hybrid Search Overview - Azure AI Search | Microsoft Learn): Learn how hybrid search in Azure AI Search combines vector and full-text queries in a single request for more relevant results using reciprocal rank fusion. [https://learn.microsoft.com/en-us/azure/search/hybrid-search-overview]\n- Web source (Hybrid Retrieval-Augmented Generation (RAG): A Practical Guide | by Jay Kim | Medium): March 12, 2025 - Hybrid Retrieval-Augmented Generation (RAG): A Practical Guide RAG (Retrieval-Augmented Generation) is a technique that enhances language models with an external knowledge source. Instead of relying \u2026 [https://medium.com/@bravekjh/hybrid-retrieval-augmented-generation-rag-a-practical-guide-dab74fc28ee9]\n\nCritic review: supported."
+      },
+      "output": {
+        "status": "pending_human_approval",
+        "approved": false
+      }
+    }
+  ],
+  "summary": "Summary:\nResearch question: What is hybrid retrieval?\n\nLocal evidence:\n- Local source (retrieval-guide.md): # Retrieval guide\n\nHybrid retrieval combines lexical search with semantic vector search. Lexical search is useful when an exact term, identifier, or phrase matters. Semantic search is useful when the question and source use different wording but express a similar idea.\n\nReranking is a second-stage operation. A retriever first gathers a candidate set, then a reranker scores those candidates more precisely so the most useful passages appear first.\n- Local source (memory-guide.md): # Memory guide\n\nShort-term memory holds information needed during one active run, such as the current question, plan, retrieved passages, and draft answer.\n\nLong-term memory persists selected information across runs. It should store only useful, trusted facts and should keep provenance so later answers can distinguish remembered information from newly retrieved evidence.\n\nRemembered evidence:\n- Remembered note (retrieval-guide.md, https://example.com/recovery): Research was completed for: What is hybrid retrieval?. Sources used: retrieval-guide.md, https://example.com/recovery.\n- Remembered note (retrieval-guide.md, https://example.com/recovery): Research was completed for: What is hybrid retrieval?. Sources used: retrieval-guide.md, https://example.com/recovery.\n\nWeb evidence:\n- Web source (What is hybrid search? How it works and when to use it | Elastic): Hybrid search is an information retrieval technique that blends two or more search methods (e.g., lexical search and semantic search) into a single ranked list to improve relevance and recall. [https://www.elastic.co/what-is/hybrid-search]\n- Web source (Hybrid Document Retrieval | Haystack): Both retrievers return ranked lists of results with relevance scores attached to each document (note that, since they employ different scoring techniques, the scores are not really meaningful in a hybrid retrieval setting). You can use different methods for joining these results lists. Which one you use \u2013 and whether you add another module on top of the JoinDocuments node \u2013 depends on your use case. Concatenation: all documents (sans duplicates) are simply appended to the final list of results. This method is sufficient if you plan to use all the results and don\u2019t care about their order. [https://haystack.deepset.ai/blog/hybrid-retrieval]\n- Web source (Creating a Hybrid Retrieval Pipeline | Haystack): June 17, 2026 - Hybrid retrieval refers to the combination of multiple retrieval methods to enhance overall performance. In the context of search systems, a hybrid retrieval pipeline executes both traditional keyword-based search and dense vector search, later ... [https://haystack.deepset.ai/tutorials/33_hybrid_retrieval]\n- Web source (Hybrid Search Overview - Azure AI Search | Microsoft Learn): Learn how hybrid search in Azure AI Search combines vector and full-text queries in a single request for more relevant results using reciprocal rank fusion. [https://learn.microsoft.com/en-us/azure/search/hybrid-search-overview]\n- Web source (Hybrid Retrieval-Augmented Generation (RAG): A Practical Guide | by Jay Kim | Medium): March 12, 2025 - Hybrid Retrieval-Augmented Generation (RAG): A Practical Guide RAG (Retrieval-Augmented Generation) is a technique that enhances language models with an external knowledge source. Instead of relying \u2026 [https://medium.com/@bravekjh/hybrid-retrieval-augmented-generation-rag-a-practical-guide-dab74fc28ee9]\n\nCritic review: supported.",
+  "needs_approval": true,
+  "trace_id": "20260918T100135757479Z",
+  "trace_summary": {
+    "event_count": 8,
+    "event_counts": {
+      "manager": 1,
+      "rag_retrieve": 1,
+      "memory_recall": 1,
+      "web_search": 1,
+      "researcher": 1,
+      "critic": 1,
+      "summarizer": 1,
+      "approval": 1
+    },
+    "first_event": "manager",
+    "last_event": "approval",
+    "started_at": "2026-09-18T10:01:09.784379+00:00",
+    "finished_at": "2026-09-18T10:01:35.691247+00:00",
+    "duration_seconds": 25.906868
+  }
+}
