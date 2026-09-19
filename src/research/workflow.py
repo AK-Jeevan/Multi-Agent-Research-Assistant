@@ -9,6 +9,7 @@ from langgraph.graph import END, START, StateGraph
 
 from src.mcp_server.server import server
 from src.rag.retrieve import retrieve
+from src.research.config import get_retrieval_settings, resolve_search
 from src.research.memory import recall_memory, remember_research
 from src.research.observability import summarize_trace
 
@@ -191,13 +192,18 @@ def _researcher_node(
     search: WebSearch,
 ) -> ResearchUpdate:
     question = state["question"]
-    rag_results = retrieve(question, top_k=2)
-    memory_results = recall_memory(question, top_k=2)
+    settings = get_retrieval_settings()
+    rag_top_k = settings["rag_top_k"]
+    memory_top_k = settings["memory_top_k"]
+    web_max_results = settings["web_max_results"]
+
+    rag_results = retrieve(question, top_k=rag_top_k)
+    memory_results = recall_memory(question, top_k=memory_top_k)
     trajectory = state.get("trajectory", []) + [
         _event(
             "tool",
             "rag_retrieve",
-            {"query": question, "top_k": 2},
+            {"query": question, "top_k": rag_top_k},
             {"result_count": len(rag_results)},
         )
     ]
@@ -205,7 +211,7 @@ def _researcher_node(
         _event(
             "tool",
             "memory_recall",
-            {"query": question, "top_k": 2},
+            {"query": question, "top_k": memory_top_k},
             {"result_count": len(memory_results)},
         )
     )
@@ -215,7 +221,7 @@ def _researcher_node(
         _event(
             "tool",
             "web_search",
-            {"query": question},
+            {"query": question, "max_results": web_max_results},
             {"result_count": len(web_results)},
         )
     )
@@ -360,12 +366,18 @@ def _approval_node(state: ResearchState) -> ResearchUpdate:
 
 
 def build_workflow(search: WebSearch = mcp_web_search):
-    """Build a compiled LangGraph with separate manager, researcher, critic, reflector, summarizer, and approval nodes."""
+    """Build a compiled LangGraph with separate manager, researcher, critic, reflector, summarizer, and approval nodes.
+
+    `search` may be a raw callable or one already resolved via `resolve_search`;
+    resolving it here (and only here) means callers never have to know or care
+    which, and it's never wrapped/resolved more than once.
+    """
+    configured_search = cast(WebSearch, resolve_search(search))
     graph = StateGraph(ResearchState)
     graph.add_node("manager", _manager_node)
     graph.add_node(
         "researcher",
-        lambda state: _researcher_node(cast(ResearchState, state), search),
+        lambda state: _researcher_node(cast(ResearchState, state), configured_search),
     )
     graph.add_node("critic", _critic_node)
     graph.add_node("reflector", _reflector_node)
@@ -402,7 +414,12 @@ def run_research(question: str, search: WebSearch = mcp_web_search) -> ResearchS
             "question": question,
             "research_plan": [],
             "draft": "",
-            "critique": {"status": "blocked", "weaknesses": ["Prompt injection attempt detected."]},
+            "critique": {
+                "status": "blocked",
+                "weaknesses": ["Prompt injection attempt detected."],
+                "evidence_counts": {"rag": 0, "web": 0},
+                "prompt_injection_signals": security["signals"],
+            },
             "summary": "Security blocked: prompt injection detected. The agent refuses to follow hidden instructions or override its original task.",
             "needs_approval": True,
             "trajectory": [_event("node", "security", {"question": question}, security)],
@@ -427,6 +444,8 @@ def run_research(question: str, search: WebSearch = mcp_web_search) -> ResearchS
         path.write_text(json.dumps(blocked_result, indent=2), encoding="utf-8")
         return blocked_result
 
+    # `search` is passed through as-is; build_workflow() is solely responsible
+    # for resolving it via resolve_search(), so it only ever happens once.
     result = build_workflow(search).invoke({"question": question, "trajectory": []})
     result["security"] = {"blocked": False, "reason": "No prompt-injection patterns detected.", "signals": []}
     if result["critique"]["status"] == "supported":

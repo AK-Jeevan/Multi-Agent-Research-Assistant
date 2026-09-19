@@ -1,0 +1,9 @@
+l and ``he`` if
+complex, e.g., a float array with "evr" driver is solved via
+"syevr", complex arrays with "gvx" driver problem is solved via "hegvx"
+etc.
+
+As a brief summary, the slowest and the most robust driver is the
+classical ``<sy/he>ev`` which uses symmetric QR. ``<sy/he>evr`` is seen as
+the optimal choice for the most general cases. However, there are certain
+occasions that ``<sy/he>evd`` 
