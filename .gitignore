@@ -203,6 +203,12 @@ cython_debug/
 # Temporary file for partial code execution
 tempCodeRunnerFile.py
 
+# Generated research artifacts
+/data/chroma/
+/data/trajectories/
+/data/research-dashboard.html
+/data/eval/
+
 # Ruff stuff:
 .ruff_cache/
 
