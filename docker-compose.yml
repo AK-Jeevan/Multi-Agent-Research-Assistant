@@ -4,7 +4,10 @@ services:
     env_file:
       - path: .env
         required: false
+    ports:
+      - "8000:8000"
     volumes:
       - ./data/chroma:/app/data/chroma
       - ./data/trajectories:/app/data/trajectories
-    restart: "no"
+    restart: unless-stopped
+    command: ["sh", "-c", "python -m src.rag.ingest && uvicorn src.api:app --host 0.0.0.0 --port 8000"]
