@@ -12,4 +12,6 @@ RUN pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu 
 
 COPY . .
 
-CMD ["sh", "-c", "python -m src.rag.ingest && python -m src.research.run \"What is hybrid retrieval?\""]
+EXPOSE 8000
+
+CMD ["sh", "-c", "python -m src.rag.ingest && uvicorn src.api:app --host 0.0.0.0 --port 8000"]
