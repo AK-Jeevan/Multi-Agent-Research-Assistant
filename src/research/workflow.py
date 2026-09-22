@@ -1,13 +1,17 @@
 import json
+import os
 import re
+import sys
 import asyncio
+from contextlib import AsyncExitStack
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable, NotRequired, TypedDict, cast
 
 from langgraph.graph import END, START, StateGraph
+from mcp import ClientSession
+from mcp.client.stdio import StdioServerParameters, stdio_client
 
-from src.mcp_server.server import server
 from src.rag.retrieve import retrieve
 from src.research.config import get_retrieval_settings, resolve_search
 from src.research.memory import recall_memory, remember_research
@@ -95,14 +99,72 @@ class ResearchUpdate(TypedDict, total=False):
 
 WebSearch = Callable[[str], list[SearchResult]]
 
+_MCP_SESSION: ClientSession | None = None
+_MCP_EXIT_STACK: AsyncExitStack | None = None
+
+
+async def _get_or_create_mcp_session() -> ClientSession:
+    """Keep a single stdio-backed MCP session alive for the app lifetime.
+
+    The app only calls the search tool once or twice per research request, so a
+    long-lived subprocess/session amortizes startup cost without adding much
+    complexity. The session is recreated lazily on first use.
+    """
+    global _MCP_SESSION, _MCP_EXIT_STACK
+    if _MCP_SESSION is not None:
+        return _MCP_SESSION
+
+    params = StdioServerParameters(
+        command=sys.executable,
+        args=["-m", "src.mcp_server.server"],
+        env={
+            **os.environ,
+            "PYTHONPATH": str(PROJECT_ROOT)
+            + (os.pathsep + os.environ["PYTHONPATH"] if os.environ.get("PYTHONPATH") else ""),
+        },
+        cwd=str(PROJECT_ROOT),
+    )
+    stack = AsyncExitStack()
+    try:
+        read, write = await stack.enter_async_context(stdio_client(params))
+        session = await stack.enter_async_context(ClientSession(read, write))
+        await session.initialize()
+    except Exception:
+        await stack.aclose()
+        raise
+
+    _MCP_SESSION = session
+    _MCP_EXIT_STACK = stack
+    return session
+
 
 def mcp_web_search(query: str) -> list[SearchResult]:
-    """Call the MCP server's web_search tool through its typed tool boundary."""
-    result = asyncio.run(server.call_tool("web_search", {"query": query, "max_results": 5}))
-    structured_content = getattr(result, "structured_content", None) or {}
-    if not isinstance(structured_content, dict):
+    """Call the MCP server's web_search tool over stdio without importing the server in-process."""
+
+    async def _call_search() -> list[SearchResult]:
+        try:
+            session = await _get_or_create_mcp_session()
+            result = await asyncio.wait_for(
+                session.call_tool("web_search", {"query": query, "max_results": 5}),
+                timeout=20.0,
+            )
+        except (TimeoutError, asyncio.TimeoutError) as exc:
+            raise TimeoutError(f"MCP web search timed out for query: {query!r}") from exc
+        except Exception as exc:
+            raise RuntimeError(f"MCP web search failed for query {query!r}: {exc}") from exc
+
+        if getattr(result, "isError", False):
+            raise RuntimeError(f"MCP server returned an error for query {query!r}.")
+
+        structured_content = getattr(result, "structured_content", None) or {}
+        if not isinstance(structured_content, dict):
+            return []
+        return cast(list[SearchResult], structured_content.get("result", []))
+
+    try:
+        return asyncio.run(_call_search())
+    except Exception:
         return []
-    return cast(list[SearchResult], structured_content.get("result", []))
 
 
 def _event(
@@ -216,15 +278,23 @@ def _researcher_node(
         )
     )
 
-    web_results = search(question)
-    trajectory.append(
-        _event(
+    try:
+        web_results = search(question)
+        web_search_event = _event(
             "tool",
             "web_search",
             {"query": question, "max_results": web_max_results},
             {"result_count": len(web_results)},
         )
-    )
+    except Exception as exc:
+        web_results = []
+        web_search_event = _event(
+            "tool",
+            "web_search_error",
+            {"query": question, "max_results": web_max_results},
+            {"error_type": type(exc).__name__, "error": str(exc)},
+        )
+    trajectory.append(web_search_event)
 
     local_evidence = "\n".join(
         f"- Local source ({result['source']}): {result['text']}" for result in rag_results
