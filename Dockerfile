@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1.7
 FROM python:3.14-slim
 
 WORKDIR /app
@@ -12,12 +11,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 
 COPY requirements.txt .
-COPY chromadb-1.5.9-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl .
 
-RUN --mount=type=cache,target=/root/.cache/pip \
-    python -m pip install --upgrade pip \
+RUN python -m pip install --upgrade pip \
     && pip install --index-url https://download.pytorch.org/whl/cpu torch==2.14.0+cpu \
-    && pip install ./chromadb-1.5.9-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl \
     && pip install -r requirements.txt
 
 COPY . .
