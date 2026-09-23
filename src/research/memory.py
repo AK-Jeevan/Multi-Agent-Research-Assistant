@@ -1,9 +1,7 @@
 from datetime import datetime, timezone
 
-from src.rag.store import get_embedding_function
 import chromadb
-
-from src.rag.store import CHROMA_DIR
+from src.rag.store import CHROMA_DIR, get_embedding_function
 
 
 MEMORY_COLLECTION_NAME = "research-assistant-memory"

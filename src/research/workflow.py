@@ -99,21 +99,14 @@ class ResearchUpdate(TypedDict, total=False):
 
 WebSearch = Callable[[str], list[SearchResult]]
 
-_MCP_SESSION: ClientSession | None = None
-_MCP_EXIT_STACK: AsyncExitStack | None = None
+async def _call_mcp_web_search(query: str, max_results: int, timeout: float) -> list[SearchResult]:
+    """Open a self-contained MCP stdio session, call web_search, and close it.
 
-
-async def _get_or_create_mcp_session() -> ClientSession:
-    """Keep a single stdio-backed MCP session alive for the app lifetime.
-
-    The app only calls the search tool once or twice per research request, so a
-    long-lived subprocess/session amortizes startup cost without adding much
-    complexity. The session is recreated lazily on first use.
+    The stdio transport, session, and their background portal event loop are all
+    entered and exited within THIS function's event loop. Because the exit stack
+    is fully unwound before returning, `asyncio.run()` around this coroutine can
+    never hang waiting for a cached-but-never-closed session's I/O threads.
     """
-    global _MCP_SESSION, _MCP_EXIT_STACK
-    if _MCP_SESSION is not None:
-        return _MCP_SESSION
-
     params = StdioServerParameters(
         command=sys.executable,
         args=["-m", "src.mcp_server.server"],
@@ -124,36 +117,19 @@ async def _get_or_create_mcp_session() -> ClientSession:
         },
         cwd=str(PROJECT_ROOT),
     )
-    stack = AsyncExitStack()
-    try:
+    async with AsyncExitStack() as stack:
         read, write = await stack.enter_async_context(stdio_client(params))
         session = await stack.enter_async_context(ClientSession(read, write))
-        await session.initialize()
-    except Exception:
-        await stack.aclose()
-        raise
+        await asyncio.wait_for(session.initialize(), timeout=timeout)
 
-    _MCP_SESSION = session
-    _MCP_EXIT_STACK = stack
-    return session
+        result = await asyncio.wait_for(
+            session.call_tool("web_search", {"query": query, "max_results": max_results}),
+            timeout=timeout,
+        )
 
-
-def mcp_web_search(query: str) -> list[SearchResult]:
-    """Call the MCP server's web_search tool over stdio without importing the server in-process."""
-
-    async def _call_search() -> list[SearchResult]:
-        try:
-            session = await _get_or_create_mcp_session()
-            result = await asyncio.wait_for(
-                session.call_tool("web_search", {"query": query, "max_results": 5}),
-                timeout=20.0,
-            )
-        except (TimeoutError, asyncio.TimeoutError) as exc:
-            raise TimeoutError(f"MCP web search timed out for query: {query!r}") from exc
-        except Exception as exc:
-            raise RuntimeError(f"MCP web search failed for query {query!r}: {exc}") from exc
-
-        if getattr(result, "isError", False):
+        # mcp >= 2.x exposes the error flag as `is_error` (serialized as "isError");
+        # `getattr` keeps this tolerant of both spellings across versions.
+        if getattr(result, "is_error", None) or getattr(result, "isError", False):
             raise RuntimeError(f"MCP server returned an error for query {query!r}.")
 
         structured_content = getattr(result, "structured_content", None) or {}
@@ -161,10 +137,15 @@ def mcp_web_search(query: str) -> list[SearchResult]:
             return []
         return cast(list[SearchResult], structured_content.get("result", []))
 
+
+def mcp_web_search(query: str) -> list[SearchResult]:
+    """Call the MCP server's web_search tool over stdio without importing the server in-process."""
     try:
-        return asyncio.run(_call_search())
-    except Exception:
-        return []
+        return asyncio.run(_call_mcp_web_search(query, max_results=5, timeout=20.0))
+    except (TimeoutError, asyncio.TimeoutError) as exc:
+        raise TimeoutError(f"MCP web search timed out for query: {query!r}") from exc
+    except Exception as exc:
+        raise RuntimeError(f"MCP web search failed for query {query!r}: {exc}") from exc
 
 
 def _event(

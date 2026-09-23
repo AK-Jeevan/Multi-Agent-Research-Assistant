@@ -11,6 +11,13 @@ def test_health_check():
     assert response.json()["status"] == "ok"
 
 
+def test_frontend_is_served():
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert "Multi-agent research workspace" in response.text
+
+
 def test_research_endpoint_returns_summary_and_metadata():
     response = client.post(
         "/research",
